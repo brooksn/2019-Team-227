@@ -1,18 +1,18 @@
 ### 2019 BIG DATA HACKATHON PROPOSAL FORM
 
-#### Team Number: `YOUR TEAM NUMBER HERE`  
+#### Team Number: `227`  
 
-#### Team Name: `YOUR TEAM NAME HERE`    
+#### Team Name: `Open San Diego + Friends`    
   
 #### Your team’s hackathon idea in TWO sentences:
-##### `YOUR TWO SENTENCES HERE`
-##### `YOUR TWO SENTENCES HERE`  
+##### `Using data analysis to determine and characterize transit needs for the elderly and mobility impaired`
+##### `Then communicating the availability of needs of transit to the affected population and policy makers`  
   
 #### Dataset(s) your team might use for the project (Provide name and URL):
-- ##### `YOUR DATASETS HERE`
-- ##### `YOUR DATASETS  HERE`
+- ##### `San Diego Regional Data Library`
+- ##### `Data.sandiego.gov`
 
-#### Team Coordinator GitHub Username: `YOUR TEAM COORDINATOR GITHUB USERNAME HERE`
+#### Team Coordinator GitHub Username: `nikolajbaer`
 
 #### Team Members
 | ## |        Name         | Active SDSU student? | Female active SDSU student? | Active SDSU veteran? | 14th grade (college 2nd year) or younger? |
@@ -31,8 +31,8 @@
 #### A question your team is answering (check a box OR provide a question your team created)
 
 **Smart City**
-- [x] How can San Diegans have better options for parking in high-traffic areas to void congestion?
-- [x] How can we get an emergency vehicle to the scene in shortest possible time can save lives?
+- [ ] How can San Diegans have better options for parking in high-traffic areas to void congestion?
+- [ ] How can we get an emergency vehicle to the scene in shortest possible time can save lives?
 - [ ] Your question:
 
 **Smart Environment**
@@ -47,7 +47,7 @@
 
 **Smart Transportation**
 - [ ] How can San Diegans make better transportation decisions of getting from point A to Z that leaves a smaller carbon footprint?
-- [ ] Your question:
+- [X] Your question: What transportation accessibility is available to the aging populations of San Diego?
 
 **Smart Health**
 - [ ] How can we share useful public health information and web analytical tools for improve public health in San Diego?
