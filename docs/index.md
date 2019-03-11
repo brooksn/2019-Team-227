@@ -10,4 +10,4 @@ Our theme and forthcoming hack will be:
 
 Our first step will be to put together a map to help us understand how the aging population is currently distributed in San Diego, in relation to transportation infrastructure.
 
-The target will be to display this data [on an interactive map]({% link "data.html" %}).
+The target will be to display this data [on an interactive map](data.html).
