@@ -8,5 +8,6 @@ Our theme and forthcoming hack will be:
 
 > Then communicating the availability of needs of transit to the affected population and policy makers
 
+Our first step will be to put together a map to help us understand how the aging population is currently distributed in San Diego, in relation to transportation infrastructure.
 
-
+The target will be to display this data [on an interactive map]({% link "data.html" %}).
