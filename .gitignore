@@ -1,2 +1,12 @@
 Gemfile.lock
 _site/
+bin/
+lib/
+*.pyc
+.Python
+data/
+etc/
+.ipynb_checkpoints/
+share/
+include/
+pip-selfcheck.json
