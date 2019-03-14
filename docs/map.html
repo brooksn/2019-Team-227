@@ -1,0 +1,35 @@
+<style>
+  #map-iframe {
+    width: 100%;
+    filter: blur(2px);
+    height: 40px;
+    pointer-events: none;
+    transition: height 150ms ease-in, filter 50ms ease-in;
+  }
+
+  #map-iframe.expanded {
+    filter: none;
+    height: 400px;
+    pointer-events: none;
+  }
+
+  #toggle-map {
+    cursor: pointer;
+    font-weight: 400;
+    color: #d5000d;
+  }
+  #toggle-map::after {
+    content: " +";
+  }
+  #toggle-map.expanded::after {
+    content: " -";
+  }
+</style>
+<script>
+  function showMap(event) {
+    document.getElementById("map-iframe").classList.toggle("expanded");
+    document.getElementById("toggle-map").classList.toggle("expanded");
+  }
+</script>
+<span id="toggle-map" href="" onclick="showMap(event)">Toggle Map</span>
+<iframe id="map-iframe" src="data.html"> </iframe>
