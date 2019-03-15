@@ -5,6 +5,13 @@
 <meta charset="utf-8">
 <style>
 
+body {
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    height: 100%;
+}
+
 .background {
   fill: #eee;
   pointer-events: all;
@@ -15,32 +22,53 @@
   stroke: #aaa;
 }
 
-.effect-layer{
-  pointer-events:none;
-}
-
-text{
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-weight: 300;
-}
-
-text.big-text{
-  font-size: 30px;
-  font-weight: 400;
-}
-
-.effect-layer text, text.dummy-text{
-  font-size: 12px;
+#infobox {
+    position: absolute;
+    z-index: 1000;
+    top: 10px;
+    left: 10px;
+    font-family: Helvetica, sans-serif;
+    color: #333;
 }
 
 </style>
 </head>
 <body>
 
+<div id="infobox">
+    <script type="html/template" id="infobox-template">
+
+<% if(typeof tract == "undefined"){ %>
+<h2>San Diego 65+ Transit Accessibility</h2>
+<% }else{ %>
+<h2>Tract <%= tract.GEOID %></h2>
+<table>
+    <tr>
+        <td>Total Population</td>
+        <td><%= d3.format(",k")(tract.total_pop) %></td>
+    </tr>
+    <tr>
+        <td>Elder Population</td>
+        <td><%= d3.format(",k")(tract.elder_pop) %> (<%= tract.elder_percent %>%)</td>
+    </tr>
+    <tr>
+        <td>Transit Score</td>
+        <td>TODO</td>
+    </tr>
+    <tr>
+        <td>Walk Score</td>
+        <td>TODO</td>
+    </tr>
+<table> 
+<% } %>
+
+    </script>
+</div><!-- end infobox template -->
+
 <svg id="map"></svg>
-<svg id="pie"></svg>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.1/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js"></script>
 <script src="assets/js/d3viz.js"></script>
 </body>
 </html>

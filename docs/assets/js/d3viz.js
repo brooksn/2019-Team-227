@@ -2,15 +2,20 @@ function init(){
 
     var map_g = null;
     var pie_g = null;
+    var infobox_template = _.template(document.getElementById("infobox-template").innerText);
+    var max_pop = 28521;
 
-    function update_selected(d){
-    }
-
+    function update_infobox(cx){
+        console.log(cx);
+        document.getElementById("infobox").innerHTML = infobox_template(cx);
+    } 
+ 
     function create_map(){
         console.log("creating map");
 
-        var width = 960,
-            height = 500,
+
+        var width = window.innerWidth,
+            height = window.innerHeight,
             centered;
         
        
@@ -26,7 +31,16 @@ function init(){
         var svg = d3.select('svg#map')
           .attr('width', width)
           .attr('height', height);
-        
+       
+        function updateWindow(e){
+            x = window.innerWidth;
+            y = window.innerHeight;
+    
+            svg.attr("width", x).attr("height", y);
+        }
+
+        d3.select(window).on('resize.updatesvg', updateWindow);
+ 
         // Add background
         svg.append('rect')
           .attr('class', 'background')
@@ -36,9 +50,6 @@ function init(){
         
         var g = svg.append('g');
      
-        var effectLayer = g.append('g')
-          .classed('effect-layer', true);
-        
         var mapLayer = g.append('g')
           .classed('map-layer', true);
 
@@ -46,32 +57,58 @@ function init(){
         var color = d3.scaleLinear()
           .domain([1, 20])
           .clamp(true)
-          .range(['#fff', '#409A99']);
-        
+          .range(['#ff','#40']);
+          //.range(['#fff', '#409A99']);
+
         // Get province color
         function fillFn(d){
-          return color(d.properties.elder_percent);
+          // i^2 = r^2 + g^2 + b^2   
+          var c = d3.hsl("steelblue");
+          c.h += 90 - d.properties.elder_percent/100 * 180;
+          c.s += 0.2 - (d.properties.total_pop / max_pop) * 0.4;
+          return c;    
         }
         
         // When clicked, zoom in
         function clicked(d) {
+
+              var x, y, k;
+            
+              if (d && centered !== d) {
+                var centroid = path.centroid(d);
+                x = centroid[0];
+                y = centroid[1];
+                k = 4;
+                centered = d;
+              } else {
+                x = width / 2;
+                y = height / 2;
+                k = 1;
+                centered = null;
+              }
+            
+              g.selectAll("path")
+                  .classed("active", centered && function(d) { return d === centered; });
+            
+              g.transition()
+                  .duration(750)
+                  .attr("transform", "translate(" + width / 2 + "," + 
+                    height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+                  .style("stroke-width", 1.5 / k + "px");
         }
         
         function mouseover(d){
+            if(typeof(d) != "undefined"){
+                update_infobox({tract:d.properties});
+            }else{ update_infobox({}); }
           // Highlight hovered province
           d3.select(this).style('fill', 'orange');
-          update_selected(d); 
         }
         
         function mouseout(d){
           // Reset province color
           mapLayer.selectAll('path')
-            .style('fill', function(d){return centered && d===centered ? '#D5708B' : fillFn(d);});
-        
-          // Remove effect text
-          effectLayer.selectAll('text').transition()
-            .style('opacity', 0)
-            .remove();
+            .style('fill', function(d){return centered && d===centered ? 'orange' : fillFn(d);});
         
         }
     
@@ -81,9 +118,14 @@ function init(){
         var tracts = d3.json('census_tracts.json');
         tracts.then(function(mapData) {
           var features = mapData.features;
+          _.each(features,function(d){
+            d.properties.area =  path.area(d);
+            d.properties.density = d.properties.total_pop / path.area(d);
+          });
           console.log("features received: ",features);
           // Update color scale domain based on data
-          color.domain([0, d3.max(features, function(d){ return d.properties.elder_percent })]);
+          //color.domain([0, d3.max(features, function(d){ return d.properties.elder_percent })]);
+          color.domain([0,55]);
         
           // Draw each province as a path
           console.log("drawing "+features.length+" tracts");
@@ -97,45 +139,14 @@ function init(){
               .on('mouseout', mouseout)
               .on('click', clicked);
 
-          console.log("filling pie");
-          create_pie([
-                {
-                    "title":"Total Population",
-                    "value":d3.sum(features,function(d){ return d.properties.total_pop; })
-                },
-                {
-                    "title":"Aging Population (65+)",
-                    "value": d3.sum(features,function(d){ return d.properties.elder_pop; })
-                }
-          ]);
-
-
         });
+
         return g;
     } 
     
-    function create_pie(pie_data){
-        var width = 200;
-        var height = 200;
-        console.log("creating pie with ",pie_data);
-
-        const svg = d3.select("svg#pie")
-            .attr("text-anchor", "middle")
-            .style("font", "12px sans-serif");
-
-        const g = svg.append("g")
-            .attr("transform", `translate(${width / 2},${height / 2})`);
-
-        g.selectAll("path")
-            .data(pie_data)
-            .enter().append("path")
-                .attr("d", arc)
-            .append("title")
-                .text(d => `${d.title}: ${d.value.toLocaleString()}`);
-        return g;
-    } 
-
     map_g = create_map();
+    update_infobox({});
+
 }
 
 
