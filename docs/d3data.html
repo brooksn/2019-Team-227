@@ -23,12 +23,15 @@ body {
 }
 
 #infobox {
+    width: 30em;
     position: absolute;
     z-index: 1000;
     top: 10px;
     left: 10px;
     font-family: Helvetica, sans-serif;
     color: #333;
+    padding: 5px;
+    background: rgba(200,200,200,0.8);
 }
 
 </style>
@@ -53,11 +56,19 @@ body {
     </tr>
     <tr>
         <td>Transit Score</td>
-        <td>TODO</td>
+        <% if(tract.transit_score != null){ %>
+        <td><%= tract.transit_score.toFixed(1) %></td>
+        <% }else{ %>
+        <td>unknown</td>
+        <% } %>
     </tr>
     <tr>
         <td>Walk Score</td>
-        <td>TODO</td>
+        <% if(tract.walk_score != null){ %>
+        <td><%= tract.walk_score.toFixed(1) %></td>
+        <% }else{ %>
+        <td>unknown</td>
+        <% } %>
     </tr>
 <table> 
 <% } %>
@@ -72,3 +83,4 @@ body {
 <script src="assets/js/d3viz.js"></script>
 </body>
 </html>
+

@@ -6,7 +6,7 @@ function init(){
     var max_pop = 28521;
 
     function update_infobox(cx){
-        console.log(cx);
+        //console.log(cx);
         document.getElementById("infobox").innerHTML = infobox_template(cx);
     } 
  
@@ -65,12 +65,23 @@ function init(){
           // i^2 = r^2 + g^2 + b^2   
           var c = d3.hsl("steelblue");
           c.h += 90 - d.properties.elder_percent/100 * 180;
-          c.s += 0.2 - (d.properties.total_pop / max_pop) * 0.4;
+          c.s += 0.2 + ( d.properties.total_pop / max_pop) * 0.4;
           return c;    
+        }
+    
+        var dotColor = d3.scaleLinear()
+            .domain([0,100])
+            .clamp(true)
+            .range(['#000','#fff'])
+        function dotFill(d){
+            return dotColor(d.properties.transit_score);
         }
         
         // When clicked, zoom in
         function clicked(d) {
+            if(typeof(d) != "undefined"){
+                update_infobox({tract:d.properties});
+            }else{ update_infobox({}); }
 
               var x, y, k;
             
@@ -98,9 +109,6 @@ function init(){
         }
         
         function mouseover(d){
-            if(typeof(d) != "undefined"){
-                update_infobox({tract:d.properties});
-            }else{ update_infobox({}); }
           // Highlight hovered province
           d3.select(this).style('fill', 'orange');
         }
@@ -137,7 +145,20 @@ function init(){
               .style('fill', fillFn)
               .on('mouseover', mouseover)
               .on('mouseout', mouseout)
-              .on('click', clicked);
+              .on('click', clicked)
+
+          mapLayer.selectAll('circle')
+              .data(features)
+            .enter().append('circle')
+              .each(function(d){
+                    var centroid = path.centroid(d);
+                    d3.select(this)
+                        .attr('cx',centroid[0])
+                        .attr('cy',centroid[1])
+                        .attr('fill',dotFill(d))
+                        .attr('stroke','none')
+                        .attr('r','1');
+              }) 
 
         });
 
