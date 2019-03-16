@@ -5,6 +5,13 @@
 <meta charset="utf-8">
 <style>
 
+body {
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    height: 100%;
+}
+
 .background {
   fill: #eee;
   pointer-events: all;
@@ -15,145 +22,65 @@
   stroke: #aaa;
 }
 
-.effect-layer{
-  pointer-events:none;
-}
-
-text{
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-weight: 300;
-}
-
-text.big-text{
-  font-size: 30px;
-  font-weight: 400;
-}
-
-.effect-layer text, text.dummy-text{
-  font-size: 12px;
+#infobox {
+    width: 30em;
+    position: absolute;
+    z-index: 1000;
+    top: 10px;
+    left: 10px;
+    font-family: Helvetica, sans-serif;
+    color: #333;
+    padding: 5px;
+    background: rgba(200,200,200,0.8);
 }
 
 </style>
 </head>
 <body>
 
-<svg></svg>
+<div id="infobox">
+    <script type="html/template" id="infobox-template">
 
-<script src="https://d3js.org/d3.v3.min.js"></script>
-<script>
+<% if(typeof tract == "undefined"){ %>
+<h2>San Diego 65+ Transit Accessibility</h2>
+<% }else{ %>
+<h2>Tract <%= tract.GEOID %></h2>
+<table>
+    <tr>
+        <td>Total Population</td>
+        <td><%= d3.format(",k")(tract.total_pop) %></td>
+    </tr>
+    <tr>
+        <td>Elder Population</td>
+        <td><%= d3.format(",k")(tract.elder_pop) %> (<%= tract.elder_percent %>%)</td>
+    </tr>
+    <tr>
+        <td>Transit Score</td>
+        <% if(tract.transit_score != null){ %>
+        <td><%= tract.transit_score.toFixed(1) %></td>
+        <% }else{ %>
+        <td>unknown</td>
+        <% } %>
+    </tr>
+    <tr>
+        <td>Walk Score</td>
+        <% if(tract.walk_score != null){ %>
+        <td><%= tract.walk_score.toFixed(1) %></td>
+        <% }else{ %>
+        <td>unknown</td>
+        <% } %>
+    </tr>
+<table> 
+<% } %>
 
-var width = 960,
-    height = 500,
-    centered;
+    </script>
+</div><!-- end infobox template -->
 
-// Define color scale
-var color = d3.scale.linear()
-  .domain([1, 20])
-  .clamp(true)
-  .range(['#fff', '#409A99']);
+<svg id="map"></svg>
 
-var projection = d3.geo.mercator()
-  .scale(20000)
-  .center([-117,33])
-  .translate([width / 2, height / 2]);
-
-var path = d3.geo.path()
-  .projection(projection);
-
-// Set svg width & height
-var svg = d3.select('svg')
-  .attr('width', width)
-  .attr('height', height);
-
-// Add background
-svg.append('rect')
-  .attr('class', 'background')
-  .attr('width', width)
-  .attr('height', height)
-  .on('click', clicked);
-
-var g = svg.append('g');
-
-var effectLayer = g.append('g')
-  .classed('effect-layer', true);
-
-var mapLayer = g.append('g')
-  .classed('map-layer', true);
-
-// Load map data
-d3.json('census_tracts.json', function(error, mapData) {
-  var features = mapData.features;
-
-  // Update color scale domain based on data
-  color.domain([0, d3.max(features, function(d){ return d.properties.elder_percent })]);
-
-  // Draw each province as a path
-  mapLayer.selectAll('path')
-      .data(features)
-    .enter().append('path')
-      .attr('d', path)
-      .attr('vector-effect', 'non-scaling-stroke')
-      .style('fill', fillFn)
-      .on('mouseover', mouseover)
-      .on('mouseout', mouseout)
-      .on('click', clicked);
-});
-
-
-// Get province color
-function fillFn(d){
-  return color(d.properties.elder_percent);
-}
-
-// When clicked, zoom in
-function clicked(d) {
-  var x, y, k;
-
-  // Compute centroid of the selected path
-  if (d && centered !== d) {
-    var centroid = path.centroid(d);
-    x = centroid[0];
-    y = centroid[1];
-    k = 4;
-    centered = d;
-  } else {
-    x = width / 2;
-    y = height / 2;
-    k = 1;
-    centered = null;
-  }
-
-  // Highlight the clicked province
-  mapLayer.selectAll('path')
-    .style('fill', function(d){return centered && d===centered ? '#D5708B' : fillFn(d);});
-
-  // Zoom
-  g.transition()
-    .duration(750)
-    .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')scale(' + k + ')translate(' + -x + ',' + -y + ')');
-}
-
-function mouseover(d){
-  // Highlight hovered province
-  d3.select(this).style('fill', 'orange');
-
-  // Draw effects
-  textArt(nameFn(d));
-}
-
-function mouseout(d){
-  // Reset province color
-  mapLayer.selectAll('path')
-    .style('fill', function(d){return centered && d===centered ? '#D5708B' : fillFn(d);});
-
-  // Remove effect text
-  effectLayer.selectAll('text').transition()
-    .style('opacity', 0)
-    .remove();
-
-}
-
-
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.1/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js"></script>
+<script src="assets/js/d3viz.js"></script>
 </body>
 </html>
+
